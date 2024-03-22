@@ -6,8 +6,8 @@
       </div>
     </div>
     <div class="btn-box">
-      <button @click="getCameras">扫码</button>
-      <span>{{ result }}</span>
+      <div>{{ result }}</div>
+      <div @click="getCameras" class="scan-icon"><el-image :src="scanIcon"></el-image></div>
     </div>
   </div>
 </template>
@@ -15,16 +15,14 @@
 <script setup>
 import { onMounted, ref, onUnmounted } from 'vue'
 import { Html5Qrcode } from 'html5-qrcode'
+import scanIcon from '@/assets/scan.png'
 
 const cameraId = ref('')
 const devicesInfo = ref('')
 const html5QrCode = ref(null)
 const result = ref('')
-// const router = useRouter()
 
-onMounted(() => {
-  // getCameras()
-})
+onMounted(() => {})
 
 onUnmounted(() => {
   stop()
@@ -105,7 +103,6 @@ const stop = () => {
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: #000;
 }
 .qr-container {
   position: relative;
@@ -115,18 +112,25 @@ const stop = () => {
 .qr-box {
   height: 100%;
 }
+
 #reader {
   top: 50%;
   left: 0;
 }
+
 .btn-box {
-  flex: 1;
-  display: flex;
-  justify-content: space-around;
-  align-items: flex-start;
-  margin-top: auto;
   padding: 12px;
   color: #fff;
   font-size: 28px;
+  position: fixed;
+  bottom: 50%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.scan-icon {
+  width: 45px;
+  height: 45px;
 }
 </style>
