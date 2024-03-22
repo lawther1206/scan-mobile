@@ -1,15 +1,20 @@
 <template>
-  <div class="container">
-    <div id="reader"></div>
+  <div class="page-box">
+    <div class="qr-container">
+      <div class="qr-box">
+        <div id="reader"></div>
+      </div>
+    </div>
+    <div class="btn-box">
+      <button @click="getCameras">扫码</button>
+      <span>{{ result }}</span>
+    </div>
   </div>
-  <button @click="getCameras">扫码</button>
-  <span>{{ result }}</span>
 </template>
 
 <script setup>
 import { onMounted, ref, onUnmounted } from 'vue'
 import { Html5Qrcode } from 'html5-qrcode'
-
 
 const cameraId = ref('')
 const devicesInfo = ref('')
@@ -54,7 +59,7 @@ const start = () => {
     .start(
       cameraId.value, // retreived in the previous step.
       {
-        fps: 10, // 设置每秒多少帧
+        fps: 20, // 设置每秒多少帧
         qrbox: { width: 250, height: 250 } // 设置取景范围
         // scannable, rest shaded.
       },
@@ -87,7 +92,6 @@ const stop = () => {
     .then((ignore) => {
       // QR Code scanning is stopped.
       console.log('QR Code scanning stopped.', ignore)
-
     })
     .catch((err) => {
       // Stop failed, handle it.
@@ -97,15 +101,32 @@ const stop = () => {
 </script>
 
 <style scoped>
-.container {
-  position: relative;
+.page-box {
+  display: flex;
+  flex-direction: column;
   height: 100%;
+  background: #000;
+}
+.qr-container {
+  position: relative;
   width: 100%;
-  background: rgba(#000000, 0.48);
+  height: 90%;
+}
+.qr-box {
+  height: 100%;
 }
 #reader {
   top: 50%;
   left: 0;
-  transform: translateY(-50%);
+}
+.btn-box {
+  flex: 1;
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  margin-top: auto;
+  padding: 12px;
+  color: #fff;
+  font-size: 28px;
 }
 </style>
