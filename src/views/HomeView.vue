@@ -5,8 +5,8 @@
         <div id="reader"></div>
       </div>
     </div>
+    <div class="result">{{ result }}</div>
     <div class="btn-box">
-      <div>{{ result }}</div>
       <div @click="getCameras" class="scan-icon"><el-image :src="scanIcon"></el-image></div>
     </div>
   </div>
@@ -133,4 +133,5 @@ const stop = () => {
   width: 45px;
   height: 45px;
 }
+
 </style>
