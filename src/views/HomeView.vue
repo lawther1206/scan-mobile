@@ -6,7 +6,7 @@
       </div>
     </div>
     <div class="result">{{ result }}</div>
-    <div class="btn-box">
+    <div class="btn-box" v-if="iconFlag">
       <div @click="getCameras" class="scan-icon"><el-image :src="scanIcon"></el-image></div>
     </div>
   </div>
@@ -21,6 +21,8 @@ const cameraId = ref('')
 const devicesInfo = ref('')
 const html5QrCode = ref(null)
 const result = ref('')
+// 控制图标的展示隐藏
+const iconFlag = ref(true)
 
 onMounted(() => {})
 
@@ -34,39 +36,28 @@ const getCameras = () => {
       console.log('摄像头信息', devices)
       if (devices && devices.length) {
         // 如果有2个摄像头，1为前置的
-        if (devices.length > 1) {
-          cameraId.value = devices[1].id
-        } else {
-          cameraId.value = devices[0].id
-        }
+        if (devices.length > 1) cameraId.value = devices[1].id
+        else cameraId.value = devices[0].id
         devicesInfo.value = devices
-        // start开始扫描
         start()
       }
     })
     .catch((err) => {
-      // handle err
       console.log('获取设备信息失败', err) // 获取设备信息失败
     })
 }
 const start = () => {
   html5QrCode.value = new Html5Qrcode('reader')
   console.log('html5QrCode', html5QrCode)
-
+  iconFlag.value = false
   html5QrCode.value
     .start(
-      cameraId.value, // retreived in the previous step.
+      cameraId.value,
       {
         fps: 20, // 设置每秒多少帧
-        qrbox: { width: 250, height: 250 } // 设置取景范围
-        // scannable, rest shaded.
+        qrbox: { width: 250, height: 150 } // 设置取景范围
       },
       (decodedText, decodedResult) => {
-        // do something when code is read. For example:
-        // if (qrCodeMessage) {
-        //   getCode(qrCodeMessage);
-        //   stop();
-        // }
         console.log('扫描的结果', decodedText, decodedResult)
         result.value = decodedText
         if (decodedText) {
@@ -74,13 +65,10 @@ const start = () => {
         }
       },
       (errorMessage) => {
-        // parse error, ideally ignore it. For example:
-        // console.log(`QR Code no longer in front of camera.`);
         console.log('暂无扫描结果', errorMessage)
       }
     )
     .catch((err) => {
-      // Start failed, handle it. For example,
       console.log(`Unable to start scanning, error: ${err}`)
     })
 }
@@ -88,11 +76,11 @@ const stop = () => {
   html5QrCode.value
     .stop()
     .then((ignore) => {
-      // QR Code scanning is stopped.
+      iconFlag.value = true
       console.log('QR Code scanning stopped.', ignore)
     })
     .catch((err) => {
-      // Stop failed, handle it.
+      iconFlag.value = true
       console.log('Unable to stop scanning.', err)
     })
 }
@@ -133,5 +121,4 @@ const stop = () => {
   width: 45px;
   height: 45px;
 }
-
 </style>
