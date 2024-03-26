@@ -12,9 +12,7 @@ const cameraId = ref('')
 const devicesInfo = ref('')
 const html5QrCode = ref(null)
 
-onMounted(() => {
-  getCameras()
-})
+onMounted(() => {})
 
 onUnmounted(() => {
   stop()
@@ -78,7 +76,7 @@ const stop = () => {
       emits('setError', err)
     })
 }
-defineExpose({ getCameras })
+defineExpose({ getCameras, stop })
 </script>
 
 <style lang="scss" scoped>

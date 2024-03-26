@@ -1,6 +1,7 @@
 <template>
   <div>
-    <QrScan ref="qrcode" @ok="getResult" @setError="setError" v-if="open" />
+    <QrScan ref="qrcode" @getResult="getResult" @setError="setError" />
+    
     <el-card v-if="!open && Object.keys(result).length > 0">
       <div class="result-text">
         {{ result }}
@@ -24,6 +25,8 @@ import scan from '@/assets/scan.png'
 const open = ref(false)
 const result = ref({})
 
+const qrcode = ref(null)
+
 var browser = {
   // 判断浏览器内核
   versions: (function () {
@@ -41,16 +44,19 @@ var browser = {
 const clickQr = () => {
   // 点击签到时判断该浏览器内核，谷歌、苹果、火狐、微信可以打开
   if (browser.versions.webKit || browser.versions.weixin || browser.versions.gecko) {
+    qrcode.value?.getCameras()
     open.value = true
   } else {
     ElMessage('该浏览器不支持，请打开主流浏览器：谷歌、火狐，或微信内打开')
   }
 }
+
 const getResult = (res) => {
   result.value = res
-  open.value = false
 }
+
 const setError = (e) => {
+  qrcode.value?.stop()
   open.value = false
   ElMessage(e) // 提示报错内容
 }
