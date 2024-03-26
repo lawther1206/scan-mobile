@@ -1,124 +1,85 @@
 <template>
-  <div class="page-box">
-    <div class="qr-container">
-      <div class="qr-box">
-        <div id="reader"></div>
+  <div>
+    <QrScan ref="qrcode" @ok="getResult" @setError="setError" v-if="open" />
+    <el-card v-if="!open && Object.keys(result).length > 0">
+      <div class="result-text">
+        {{ result }}
       </div>
-    </div>
-    <div class="result">{{ result }}</div>
-    <div class="btn-box" v-if="iconFlag">
-      <div @click="getCameras" class="scan-icon"><el-image :src="scanIcon"></el-image></div>
-    </div>
+    </el-card>
+
+    <el-card class="btn-tool" @click="clickQr">
+      <div class="tool">
+        <el-image class="icon-left" fit="fill" :src="scan" />
+        <h2 class="custom-title">开始扫码</h2>
+      </div>
+    </el-card>
   </div>
 </template>
+<script setup lang="ts">
+import { ref } from 'vue'
+import QrScan from '@/components/qrcode.vue'
+import { ElMessage } from 'element-plus'
+import scan from '@/assets/scan.png'
 
-<script setup>
-import { onMounted, ref, onUnmounted } from 'vue'
-import { Html5Qrcode } from 'html5-qrcode'
-import scanIcon from '@/assets/scan.png'
+const open = ref(false)
+const result = ref({})
 
-const cameraId = ref('')
-const devicesInfo = ref('')
-const html5QrCode = ref(null)
-const result = ref('')
-// 控制图标的展示隐藏
-const iconFlag = ref(true)
-
-onMounted(() => {})
-
-onUnmounted(() => {
-  stop()
-})
-
-const getCameras = () => {
-  Html5Qrcode.getCameras()
-    .then((devices) => {
-      console.log('摄像头信息', devices)
-      if (devices && devices.length) {
-        // 如果有2个摄像头，1为前置的
-        if (devices.length > 1) cameraId.value = devices[1].id
-        else cameraId.value = devices[0].id
-        devicesInfo.value = devices
-        start()
-      }
-    })
-    .catch((err) => {
-      console.log('获取设备信息失败', err) // 获取设备信息失败
-    })
+var browser = {
+  // 判断浏览器内核
+  versions: (function () {
+    var u = navigator.userAgent
+    return {
+      trident: u.indexOf('Trident') > -1, //IE内核
+      presto: u.indexOf('Presto') > -1, //opera内核
+      webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+      gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+      weixin: u.indexOf('MicroMessenger') > -1 //是否微信 （2015-01-22新增）
+    }
+  })()
 }
-const start = () => {
-  html5QrCode.value = new Html5Qrcode('reader')
-  console.log('html5QrCode', html5QrCode)
-  iconFlag.value = false
-  html5QrCode.value
-    .start(
-      cameraId.value,
-      {
-        fps: 20, // 设置每秒多少帧
-        qrbox: { width: 250, height: 150 } // 设置取景范围
-      },
-      (decodedText, decodedResult) => {
-        console.log('扫描的结果', decodedText, decodedResult)
-        result.value = decodedText
-        if (decodedText) {
-          stop()
-        }
-      },
-      (errorMessage) => {
-        console.log('暂无扫描结果', errorMessage)
-      }
-    )
-    .catch((err) => {
-      console.log(`Unable to start scanning, error: ${err}`)
-    })
+
+const clickQr = () => {
+  // 点击签到时判断该浏览器内核，谷歌、苹果、火狐、微信可以打开
+  if (browser.versions.webKit || browser.versions.weixin || browser.versions.gecko) {
+    open.value = true
+  } else {
+    ElMessage('该浏览器不支持，请打开主流浏览器：谷歌、火狐，或微信内打开')
+  }
 }
-const stop = () => {
-  html5QrCode.value
-    .stop()
-    .then((ignore) => {
-      iconFlag.value = true
-      console.log('QR Code scanning stopped.', ignore)
-    })
-    .catch((err) => {
-      iconFlag.value = true
-      console.log('Unable to stop scanning.', err)
-    })
+const getResult = (res) => {
+  result.value = res
+  open.value = false
+}
+const setError = (e) => {
+  open.value = false
+  ElMessage(e) // 提示报错内容
 }
 </script>
-
-<style scoped>
-.page-box {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-.qr-container {
-  position: relative;
-  width: 100%;
-  height: 90%;
-}
-.qr-box {
-  height: 100%;
-}
-
-#reader {
-  top: 50%;
-  left: 0;
-}
-
-.btn-box {
-  padding: 12px;
-  color: #fff;
-  font-size: 28px;
+<style lang="scss" scoped>
+.btn-tool {
   position: fixed;
-  bottom: 50%;
-  width: 100%;
+  bottom: 20px;
+  left: 50%;
+  transform: translate(-50%);
+  .tool {
+    display: flex;
+    align-items: center;
+    .icon-left {
+      width: 35px;
+      margin-right: 10px;
+    }
+    .custom-title {
+      line-height: 35px;
+    }
+  }
+}
+
+.result-text {
   display: flex;
   justify-content: center;
-}
-
-.scan-icon {
-  width: 45px;
-  height: 45px;
+  align-items: center;
+  width: 80vw;
+  max-width: 500px;
+  min-height: 300px;
 }
 </style>
