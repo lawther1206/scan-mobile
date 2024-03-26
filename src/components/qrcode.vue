@@ -81,7 +81,7 @@ defineExpose({ getCameras, stop })
 <style lang="scss" scoped>
 .qrcode {
   position: relative;
-  height: 100%;
+  height: 100vh;
   width: 100%;
   background: rgba($color: #000000, $alpha: 0.48);
 }
