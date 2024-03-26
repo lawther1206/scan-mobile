@@ -47,11 +47,7 @@ const start = () => {
       },
       (decodedText, decodedResult) => {
         console.log('扫描的结果', decodedText, decodedResult)
-        let params = {
-          decodedText,
-          decodedResult
-        }
-        emits('getResult', params)
+        emits('getResult', decodedText)
         if (decodedText) stop()
       },
       (errorMessage) => {
@@ -65,7 +61,8 @@ const start = () => {
 }
 
 const stop = () => {
-  html5QrCode.value.stop()
+  html5QrCode.value
+    .stop()
     .then((ignore) => {
       // 关闭
       emits('setError', ignore)
@@ -83,7 +80,7 @@ defineExpose({ getCameras, stop })
   position: relative;
   height: 100vh;
   width: 100%;
-  background: rgba($color: #000000, $alpha: 0.48);
+  // background: rgba($color: #000000, $alpha: 0.48);
 }
 #reader {
   top: 50%;

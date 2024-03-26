@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <div class="scan">
     <QrScan ref="qrcode" @getResult="getResult" @setError="setError" />
 
-    <el-card v-if="Object.keys(result).length > 0 && open">
+    <el-card v-if="result && open" class="result">
       <div class="result-text">
         {{ result }}
       </div>
@@ -23,7 +23,7 @@ import { ElMessage } from 'element-plus'
 import scan from '@/assets/scan.png'
 
 const open = ref(true)
-const result = ref({})
+const result = ref('')
 
 const qrcode = ref(null)
 
@@ -59,6 +59,9 @@ const getResult = (res) => {
 const setError = (e) => {}
 </script>
 <style lang="scss" scoped>
+.scan {
+  height: 100vh;
+}
 .btn-tool {
   position: fixed;
   bottom: 20px;
@@ -76,13 +79,18 @@ const setError = (e) => {}
     }
   }
 }
-
-.result-text {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 80vw;
-  max-width: 500px;
-  min-height: 300px;
+.result {
+  position: absolute;
+  top: 25%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  .result-text {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 80vw;
+    max-width: 500px;
+    min-height: 300px;
+  }
 }
 </style>
