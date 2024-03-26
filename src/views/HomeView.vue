@@ -56,8 +56,8 @@ const getResult = (res) => {
 }
 
 const setError = (e) => {
-  qrcode.value?.stop()
-  open.value = false
+  // qrcode.value?.stop()
+  // open.value = false
   ElMessage(e) // 提示报错内容
 }
 </script>

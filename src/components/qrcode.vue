@@ -65,8 +65,7 @@ const start = () => {
 }
 
 const stop = () => {
-  html5QrCode.value
-    .stop()
+  html5QrCode.value.stop()
     .then((ignore) => {
       // 关闭
       emits('setError', ignore)
