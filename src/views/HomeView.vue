@@ -1,14 +1,14 @@
 <template>
   <div>
     <QrScan ref="qrcode" @getResult="getResult" @setError="setError" />
-    
-    <el-card v-if="!open && Object.keys(result).length > 0">
+
+    <el-card v-if="Object.keys(result).length > 0 && open">
       <div class="result-text">
         {{ result }}
       </div>
     </el-card>
 
-    <el-card class="btn-tool" @click="clickQr">
+    <el-card class="btn-tool" @click="clickQr" v-if="open">
       <div class="tool">
         <el-image class="icon-left" fit="fill" :src="scan" />
         <h2 class="custom-title">开始扫码</h2>
@@ -22,7 +22,7 @@ import QrScan from '@/components/qrcode.vue'
 import { ElMessage } from 'element-plus'
 import scan from '@/assets/scan.png'
 
-const open = ref(false)
+const open = ref(true)
 const result = ref({})
 
 const qrcode = ref(null)
@@ -45,7 +45,7 @@ const clickQr = () => {
   // 点击签到时判断该浏览器内核，谷歌、苹果、火狐、微信可以打开
   if (browser.versions.webKit || browser.versions.weixin || browser.versions.gecko) {
     qrcode.value?.getCameras()
-    open.value = true
+    open.value = false
   } else {
     ElMessage('该浏览器不支持，请打开主流浏览器：谷歌、火狐，或微信内打开')
   }
@@ -53,13 +53,10 @@ const clickQr = () => {
 
 const getResult = (res) => {
   result.value = res
+  open.value = true
 }
 
-const setError = (e) => {
-  // qrcode.value?.stop()
-  // open.value = false
-  ElMessage(e) // 提示报错内容
-}
+const setError = (e) => {}
 </script>
 <style lang="scss" scoped>
 .btn-tool {
